@@ -1,0 +1,38 @@
+.claude-code-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  margin-right: 8px;
+  border: 1px solid rgba(217, 119, 87, 0.45);
+  border-radius: 6px;
+  background: #d97757;
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.claude-code-launcher:hover {
+  background: #c2653f;
+}
+
+.claude-code-launcher:active {
+  transform: translateY(1px);
+}
+
+.claude-code-launcher--floating {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483000;
+  height: 34px;
+  margin-right: 0;
+  padding: 0 14px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}

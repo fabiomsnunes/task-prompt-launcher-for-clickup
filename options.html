@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="utf-8" />
+    <title>Abrir no Claude Code - opcoes</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Abrir no Claude Code</h1>
+      <p class="lead">
+        Template do prompt gerado ao clicar no botao de uma task do ClickUp.
+      </p>
+
+      <label for="template">Template</label>
+      <textarea id="template" rows="8" spellcheck="false"></textarea>
+
+      <p class="hint">
+        Variaveis disponiveis:
+        <code>{id}</code>, <code>{name}</code>, <code>{url}</code>.
+        Uma linha vazia no fim deixa o cursor pronto a escrever.
+      </p>
+
+      <div class="actions">
+        <button id="save" type="button" class="primary">Guardar</button>
+        <button id="reset" type="button">Repor default</button>
+        <span id="status" role="status"></span>
+      </div>
+
+      <h2>Pre-visualizacao</h2>
+      <pre id="preview"></pre>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>
