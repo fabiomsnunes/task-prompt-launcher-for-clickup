@@ -130,21 +130,69 @@ function readTaskNameFromTitle() {
     .trim();
 }
 
+/**
+ * O botao das datas mostra o texto que o ClickUp desenha ("Today", "Mon",
+ * "12 Sep"), nao a data absoluta. Os relativos sao resolvidos aqui para o
+ * prompt continuar a fazer sentido quando for lido dias depois.
+ */
+const RELATIVE_DAYS = { today: 0, tomorrow: 1, yesterday: -1 };
+
+function readDueDate() {
+  const text = readText('[data-test="task-dates-display-button"]');
+  const offset = RELATIVE_DAYS[text.toLowerCase()];
+  if (offset === undefined) return text;
+
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  return `${text} (${date.toISOString().slice(0, 10)})`;
+}
+
+function readText(selector) {
+  const node = document.querySelector(selector);
+  const text = (node?.innerText || "").trim();
+  return text === "Empty" ? "" : text;
+}
+
+function readAll(selector) {
+  return [...document.querySelectorAll(selector)]
+    .map((node) => node.innerText.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
+/** Os valores vazios ficam vazios: o que se ve na pre-visualizacao e o que sai. */
+const SHORTCODES = {
+  id: (id) => id,
+  name: () => readTaskNameFromDom() || readTaskNameFromTitle(),
+  url: () => location.href.split("?")[0],
+  date: readDueDate,
+  priority: () => readText('[data-test="task-hero-section-priority__row-data"]'),
+  tags: () => readAll('[data-test="task-hero-section__tags"] .cu-cf-value-tag__text'),
+  // A lista visualmente escondida do cu-assignees tem um nome por assignee; o
+  // que esta a vista colapsa em avatares assim que sao mais do que um.
+  assignees: () => readAll('[data-test="task-hero-section__assignees"] ul li'),
+  // O ultimo breadcrumb e a lista; os anteriores sao o space e a folder.
+  list: () => {
+    const crumbs = document.querySelectorAll(
+      '[data-test="task-view-breadcrumbs__timl-list-item"]'
+    );
+    return crumbs.length ? crumbs[crumbs.length - 1].innerText.trim() : "";
+  },
+};
+
 function readTask() {
   const id = readTaskId();
   if (!id) return null;
-  return {
-    id,
-    name: readTaskNameFromDom() || readTaskNameFromTitle(),
-    url: location.href.split("?")[0],
-  };
+  return Object.fromEntries(
+    Object.entries(SHORTCODES).map(([key, read]) => [key, read(id)])
+  );
 }
 
 function buildPrompt(template, task) {
-  return template
-    .replaceAll("{id}", task.id)
-    .replaceAll("{name}", task.name)
-    .replaceAll("{url}", task.url);
+  return Object.entries(task).reduce(
+    (prompt, [key, value]) => prompt.replaceAll(`{${key}}`, value),
+    template
+  );
 }
 
 function openExternal(href, newTab) {

@@ -10,8 +10,10 @@
       <h1>Claude Code for ClickUp</h1>
       <p class="lead">
         Templates dos prompts gerados a partir do botao nas tasks do ClickUp.
-        Variaveis: <code>{id}</code>, <code>{name}</code>, <code>{url}</code>.
+        Clica num shortcode para o inserir no template onde tens o cursor.
       </p>
+
+      <div id="shortcodes" class="shortcodes"></div>
 
       <section>
         <label for="template">Claude Code</label>
@@ -37,6 +39,11 @@
         <button id="reset" type="button">Repor defaults</button>
         <span id="status" role="status"></span>
       </div>
+
+      <p class="hint">
+        A pre-visualizacao usa uma task de exemplo. Campos vazios na task saem
+        vazios no prompt.
+      </p>
     </main>
     <script src="options.js"></script>
   </body>

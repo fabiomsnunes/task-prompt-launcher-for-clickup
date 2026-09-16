@@ -41,8 +41,25 @@ Acrescentar ferramentas é acrescentar uma entrada ao array `ACTIONS` no
 ## Templates
 
 Dois templates, editáveis na página de opções e guardados em
-`chrome.storage.sync`. Variáveis: `{id}`, `{name}`, `{url}`. A linha vazia no
-fim deixa o cursor pronto a escrever.
+`chrome.storage.sync`. A linha vazia no fim deixa o cursor pronto a escrever.
+
+| Shortcode | Vem de | Exemplo |
+| --- | --- | --- |
+| `{id}` | URL | `123zgec38ut` |
+| `{name}` | Título da task | `Stop And Buy não consegue pagar...` |
+| `{url}` | URL | `https://app.clickup.com/t/2450702/123zgec38ut` |
+| `{date}` | Due date | `Today (2026-09-16)` |
+| `{priority}` | Prioridade | `High` |
+| `{tags}` | Tags, separadas por vírgula | `support` |
+| `{assignees}` | Assignees, separados por vírgula | `Fábio Nunes` |
+| `{list}` | Último breadcrumb | `Moneybox (20min)` |
+
+Na página de opções cada shortcode é um chip: clicar insere-o no template onde
+está o cursor. Campos vazios na task saem vazios no prompt.
+
+O ClickUp desenha a due date em relativo ("Today", "Mon"), sem data absoluta em
+lado nenhum do DOM. O `{date}` resolve `Today`, `Tomorrow` e `Yesterday` para a
+data real entre parênteses; as outras formas ficam como o ClickUp as mostra.
 
 **Claude Code** (default):
 
@@ -86,10 +103,13 @@ Referência: https://support.claude.com/en/articles/14729294-open-claude-desktop
 - O ID sai do URL. O ClickUp normaliza `/t/{id}` para `/t/{teamId}/{id}`, e com
   custom IDs o último segmento é o custom ID.
 - O nome sai de `[data-test="task-title__text-area"]`, com fallback para o
-  `document.title` (`Nome da task | #id`). Os selectors foram confirmados na app
-  em Setembro de 2026 e estão todos no topo do `content.js`. Se partirem
+  `document.title` (`Nome da task | #id`). Os restantes campos saem do hero
+  section e dos breadcrumbs, pelo mapa `SHORTCODES` no `content.js`. Todos os
+  selectors foram confirmados numa task real em Setembro de 2026. Se partirem
   demasiadas vezes, o passo seguinte é ir à API do ClickUp com um token pessoal
   em `chrome.storage.local`.
+- Os assignees saem da lista `ul` escondida do `cu-assignees` (a versão à vista
+  colapsa em avatares quando são mais do que um).
 - O ClickUp tem tema claro e escuro e não segue o tema do sistema, por isso o
   menu escolhe as cores pela luminância do fundo por baixo do botão.
 
@@ -99,7 +119,7 @@ Tag `vX.Y.Z` → o workflow sincroniza a versão do `manifest.json` com a tag,
 valida, empacota e publica o zip na release.
 
 ```bash
-git tag v1.3.0 && git push origin v1.3.0
+git tag v1.4.0 && git push origin v1.4.0
 ```
 
 ## Fora de âmbito (v1)

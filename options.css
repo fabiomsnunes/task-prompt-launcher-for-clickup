@@ -105,3 +105,35 @@ pre {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+.shortcodes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.shortcode {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-weight: 400;
+}
+
+.shortcode:hover {
+  border-color: var(--accent);
+}
+
+.shortcode code {
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.shortcode span {
+  font-size: 12px;
+  opacity: 0.7;
+}
