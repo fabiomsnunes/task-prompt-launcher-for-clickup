@@ -8,10 +8,18 @@ Uso privado. Sem build, sem dependências, sem distribuição na Chrome Web Stor
 
 ## Instalar
 
+```bash
+node scripts/build.mjs
+```
+
+Produz `dist/` (só os ficheiros da extensão) e o zip da versão.
+
 1. `brave://extensions` (ou `chrome://extensions`)
 2. Ligar **Developer mode**
-3. **Load unpacked** e escolher a pasta do repositório (ou a pasta extraída do
-   zip da release)
+3. **Load unpacked** e escolher a pasta `dist/`
+
+Depois de mexer no código: correr o build outra vez e clicar no ícone de
+recarregar no cartão da extensão.
 
 Na primeira utilização o Brave pede confirmação para abrir a app externa.
 Marcar "sempre permitir" para `app.clickup.com`.

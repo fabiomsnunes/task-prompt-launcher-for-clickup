@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Claude Code for ClickUp",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "description": "Abre a task do ClickUp no Claude Code com o prompt inicial ja escrito.",
   "permissions": [
     "storage"

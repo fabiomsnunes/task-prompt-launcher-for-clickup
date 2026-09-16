@@ -29,15 +29,13 @@ jobs:
       - run: node scripts/validate.mjs
 
       - name: Empacotar
-        run: |
-          zip -r "clickup-claude-launcher-${GITHUB_REF_NAME}.zip" \
-            manifest.json content.js styles.css options.html options.css options.js icons background.js README.md
+        run: node scripts/build.mjs
 
       - name: Publicar release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            "clickup-claude-launcher-${GITHUB_REF_NAME}.zip" \
+            "clickup-claude-launcher-$GITHUB_REF_NAME.zip" \
             --title "$GITHUB_REF_NAME" \
             --generate-notes
