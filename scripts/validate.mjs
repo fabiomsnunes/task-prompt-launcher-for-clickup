@@ -15,6 +15,7 @@ if (!/^\d+\.\d+\.\d+$/.test(manifest.version)) {
 
 const referenced = [
   manifest.options_ui?.page,
+  manifest.background?.service_worker,
   ...Object.values(manifest.icons ?? {}),
   ...(manifest.content_scripts ?? []).flatMap((entry) => [
     ...(entry.js ?? []),
@@ -26,7 +27,9 @@ for (const file of referenced) {
   if (!existsSync(file)) errors.push(`ficheiro em falta: ${file}`);
 }
 
-for (const file of ["content.js", "options.js"]) {
+const scripts = referenced.filter((file) => file.endsWith(".js")).concat("options.js");
+
+for (const file of scripts) {
   try {
     execFileSync(process.execPath, ["--check", file], { stdio: "pipe" });
   } catch (error) {
