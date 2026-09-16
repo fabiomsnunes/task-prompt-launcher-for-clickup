@@ -27,35 +27,55 @@ Ações no menu:
 | Ação | O que faz |
 | --- | --- |
 | Abrir no Claude Code | `claude://code/new?q=<prompt>` (o mesmo que o clique no ícone) |
+| Abrir no Claude.ai | `https://claude.ai/new?q=<prompt>` em separador novo |
+| Abrir no ChatGPT | `https://chatgpt.com/?q=<prompt>` em separador novo |
 | Copiar prompt | Põe o prompt na clipboard |
 | Copiar ID da task | Só o ID, para colar num prompt já a decorrer |
 | Editar template | Abre a página de opções |
 
+Nenhum dos dois destinos web submete sozinho: ambos só preenchem o composer.
+
 Acrescentar ferramentas é acrescentar uma entrada ao array `ACTIONS` no
 [`content.js`](content.js): cada ação recebe a task e o prompt já montado.
 
-## Template
+## Templates
 
-Editável na página de opções, guardado em `chrome.storage.sync`.
+Dois templates, editáveis na página de opções e guardados em
+`chrome.storage.sync`. Variáveis: `{id}`, `{name}`, `{url}`. A linha vazia no
+fim deixa o cursor pronto a escrever.
 
-Default:
+**Claude Code** (default):
 
 ```
 Vamos trabalhar na task ClickUp {id} - "{name}".
 
 ```
 
-Variáveis: `{id}`, `{name}`, `{url}`. A linha vazia no fim deixa o cursor pronto
-a escrever.
-
 O ID chega para o Claude Code ir buscar descrição, subtasks e comentários pelo
 MCP do ClickUp. O nome serve de contexto rápido e de confirmação visual.
 
-## Deep link
+**Claude.ai e ChatGPT** (default):
+
+```
+Vamos trabalhar nesta task do ClickUp:
+
+{name}
+{url}
+
+```
+
+Do outro lado não há MCP do ClickUp, por isso o prompt leva o nome e o URL em
+vez de contar com o ID.
+
+## Deep links
 
 ```
 claude://code/new?q=<prompt URL-encoded>
+https://claude.ai/new?q=<prompt URL-encoded>
+https://chatgpt.com/?q=<prompt URL-encoded>
 ```
+
+O ChatGPT reescreve o `?q=` para `?prompt=` ao carregar.
 
 Referência: https://support.claude.com/en/articles/14729294-open-claude-desktop-with-a-link
 
@@ -79,7 +99,7 @@ Tag `vX.Y.Z` → o workflow sincroniza a versão do `manifest.json` com a tag,
 valida, empacota e publica o zip na release.
 
 ```bash
-git tag v1.1.0 && git push origin v1.1.0
+git tag v1.3.0 && git push origin v1.3.0
 ```
 
 ## Fora de âmbito (v1)

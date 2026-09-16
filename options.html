@@ -9,26 +9,34 @@
     <main>
       <h1>Claude Code for ClickUp</h1>
       <p class="lead">
-        Template do prompt gerado ao clicar no botao de uma task do ClickUp.
+        Templates dos prompts gerados a partir do botao nas tasks do ClickUp.
+        Variaveis: <code>{id}</code>, <code>{name}</code>, <code>{url}</code>.
       </p>
 
-      <label for="template">Template</label>
-      <textarea id="template" rows="8" spellcheck="false"></textarea>
+      <section>
+        <label for="template">Claude Code</label>
+        <p class="hint">
+          O ID chega: o Claude Code vai buscar descricao, subtasks e comentarios
+          pelo MCP do ClickUp.
+        </p>
+        <textarea id="template" rows="6" spellcheck="false"></textarea>
+        <pre id="template-preview"></pre>
+      </section>
 
-      <p class="hint">
-        Variaveis disponiveis:
-        <code>{id}</code>, <code>{name}</code>, <code>{url}</code>.
-        Uma linha vazia no fim deixa o cursor pronto a escrever.
-      </p>
+      <section>
+        <label for="webTemplate">Claude.ai e ChatGPT</label>
+        <p class="hint">
+          Sem MCP do lado de la, por isso vale a pena levar o nome e o URL.
+        </p>
+        <textarea id="webTemplate" rows="6" spellcheck="false"></textarea>
+        <pre id="webTemplate-preview"></pre>
+      </section>
 
       <div class="actions">
         <button id="save" type="button" class="primary">Guardar</button>
-        <button id="reset" type="button">Repor default</button>
+        <button id="reset" type="button">Repor defaults</button>
         <span id="status" role="status"></span>
       </div>
-
-      <h2>Pre-visualizacao</h2>
-      <pre id="preview"></pre>
     </main>
     <script src="options.js"></script>
   </body>

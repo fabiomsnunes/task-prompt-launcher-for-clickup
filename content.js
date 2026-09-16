@@ -11,7 +11,12 @@
 
 const ROOT_ID = "claude-code-launcher";
 const MENU_ID = "claude-code-launcher-menu";
-const DEFAULT_TEMPLATE = 'Vamos trabalhar na task ClickUp {id} - "{name}".\n\n';
+// O Claude Code chega ao resto da task pelo MCP do ClickUp a partir do ID; o
+// claude.ai e o ChatGPT nao, por isso o template web leva nome e URL.
+const DEFAULTS = {
+  template: 'Vamos trabalhar na task ClickUp {id} - "{name}".\n\n',
+  webTemplate: 'Vamos trabalhar nesta task do ClickUp:\n\n{name}\n{url}\n\n',
+};
 
 // Verificados na app em Set/2026. O primeiro e o caminho completo; os
 // restantes sao fallbacks para quando a estrutura a volta mudar.
@@ -40,7 +45,7 @@ const CHECK_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden=
 
 const CARET_ICON = `<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M3 4.5L6 7.5l3-3"/></svg>`;
 
-let cachedTemplate = DEFAULT_TEMPLATE;
+let cachedTemplates = { ...DEFAULTS };
 
 /**
  * As accoes do menu. Acrescentar ferramentas e acrescentar entradas aqui:
@@ -54,6 +59,20 @@ const ACTIONS = [
     run: (task, prompt) => {
       openExternal(`claude://code/new?q=${encodeURIComponent(prompt)}`);
     },
+  },
+  {
+    id: "open-web",
+    label: "Abrir no Claude.ai",
+    template: "webTemplate",
+    run: (task, prompt) =>
+      openExternal(`https://claude.ai/new?q=${encodeURIComponent(prompt)}`, true),
+  },
+  {
+    id: "open-chatgpt",
+    label: "Abrir no ChatGPT",
+    template: "webTemplate",
+    run: (task, prompt) =>
+      openExternal(`https://chatgpt.com/?q=${encodeURIComponent(prompt)}`, true),
   },
   {
     id: "copy-prompt",
@@ -73,10 +92,13 @@ const ACTIONS = [
   },
 ];
 
-function readTemplate() {
+function readTemplates() {
   return new Promise((resolve) => {
-    chrome.storage.sync.get({ template: DEFAULT_TEMPLATE }, (items) => {
-      resolve(items.template || DEFAULT_TEMPLATE);
+    chrome.storage.sync.get(DEFAULTS, (items) => {
+      resolve({
+        template: items.template || DEFAULTS.template,
+        webTemplate: items.webTemplate || DEFAULTS.webTemplate,
+      });
     });
   });
 }
@@ -125,9 +147,13 @@ function buildPrompt(template, task) {
     .replaceAll("{url}", task.url);
 }
 
-function openExternal(href) {
+function openExternal(href, newTab) {
   const link = document.createElement("a");
   link.href = href;
+  if (newTab) {
+    link.target = "_blank";
+    link.rel = "noopener";
+  }
   link.style.display = "none";
   document.body.appendChild(link);
   link.click();
@@ -148,7 +174,8 @@ async function runAction(action, { feedback } = {}) {
   if (!task) return;
 
   try {
-    await action.run(task, buildPrompt(cachedTemplate, task));
+    const template = cachedTemplates[action.template ?? "template"];
+    await action.run(task, buildPrompt(template, task));
     if (feedback && !action.primary) flash(feedback, "claude-code-launcher__button--ok");
   } catch {
     if (feedback) flash(feedback, "claude-code-launcher__button--failed");
@@ -326,13 +353,14 @@ function start() {
   window.addEventListener("resize", closeMenu);
 
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && changes.template) {
-      cachedTemplate = changes.template.newValue || DEFAULT_TEMPLATE;
+    if (area !== "sync") return;
+    for (const key of Object.keys(DEFAULTS)) {
+      if (changes[key]) cachedTemplates[key] = changes[key].newValue || DEFAULTS[key];
     }
   });
 
-  readTemplate().then((template) => {
-    cachedTemplate = template;
+  readTemplates().then((templates) => {
+    cachedTemplates = templates;
     syncLauncher();
   });
 }

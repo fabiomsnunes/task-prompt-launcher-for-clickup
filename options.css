@@ -21,9 +21,8 @@ h1 {
   font-size: 20px;
 }
 
-h2 {
-  margin: 32px 0 8px;
-  font-size: 15px;
+section {
+  margin-bottom: 28px;
 }
 
 .lead {
@@ -56,7 +55,7 @@ textarea:focus {
 }
 
 .hint {
-  margin: 8px 0 20px;
+  margin: 0 0 8px;
   font-size: 13px;
   opacity: 0.75;
 }
@@ -97,7 +96,8 @@ button.primary {
 }
 
 pre {
-  padding: 14px;
+  margin: 10px 0 0;
+  padding: 12px;
   border: 1px dashed rgba(128, 128, 128, 0.4);
   border-radius: 8px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;

@@ -1,4 +1,7 @@
-const DEFAULT_TEMPLATE = 'Vamos trabalhar na task ClickUp {id} - "{name}".\n\n';
+const DEFAULTS = {
+  template: 'Vamos trabalhar na task ClickUp {id} - "{name}".\n\n',
+  webTemplate: "Vamos trabalhar nesta task do ClickUp:\n\n{name}\n{url}\n\n",
+};
 
 const SAMPLE_TASK = {
   id: "86c1abcde",
@@ -6,12 +9,12 @@ const SAMPLE_TASK = {
   url: "https://app.clickup.com/t/86c1abcde",
 };
 
-const templateField = document.getElementById("template");
-const preview = document.getElementById("preview");
+const FIELDS = Object.keys(DEFAULTS);
 const status = document.getElementById("status");
 
-function render() {
-  preview.textContent = templateField.value
+function render(field) {
+  const value = document.getElementById(field).value;
+  document.getElementById(`${field}-preview`).textContent = value
     .replaceAll("{id}", SAMPLE_TASK.id)
     .replaceAll("{name}", SAMPLE_TASK.name)
     .replaceAll("{url}", SAMPLE_TASK.url);
@@ -24,23 +27,31 @@ function announce(message) {
   }, 2000);
 }
 
-chrome.storage.sync.get({ template: DEFAULT_TEMPLATE }, (items) => {
-  templateField.value = items.template;
-  render();
+function collect() {
+  return Object.fromEntries(
+    FIELDS.map((field) => [field, document.getElementById(field).value])
+  );
+}
+
+chrome.storage.sync.get(DEFAULTS, (items) => {
+  for (const field of FIELDS) {
+    document.getElementById(field).value = items[field] || DEFAULTS[field];
+    render(field);
+  }
 });
 
-templateField.addEventListener("input", render);
+for (const field of FIELDS) {
+  document.getElementById(field).addEventListener("input", () => render(field));
+}
 
 document.getElementById("save").addEventListener("click", () => {
-  chrome.storage.sync.set({ template: templateField.value }, () =>
-    announce("Guardado")
-  );
+  chrome.storage.sync.set(collect(), () => announce("Guardado"));
 });
 
 document.getElementById("reset").addEventListener("click", () => {
-  templateField.value = DEFAULT_TEMPLATE;
-  render();
-  chrome.storage.sync.set({ template: DEFAULT_TEMPLATE }, () =>
-    announce("Default reposto")
-  );
+  for (const field of FIELDS) {
+    document.getElementById(field).value = DEFAULTS[field];
+    render(field);
+  }
+  chrome.storage.sync.set(DEFAULTS, () => announce("Defaults repostos"));
 });
