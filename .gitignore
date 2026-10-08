@@ -1,4 +1,16 @@
 .DS_Store
-*.zip
 node_modules/
 dist/
+
+# Build e empacotamento
+*.zip
+*.crx
+
+# Chaves e segredos: o dist.pem e a chave privada que assina o .crx, perde-la
+# muda o ID da extensao.
+*.pem
+*.key
+*.p12
+*.pfx
+.env
+.env.*
