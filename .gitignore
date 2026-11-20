@@ -2,12 +2,12 @@
 node_modules/
 dist/
 
-# Build e empacotamento
+# Build output
 *.zip
 *.crx
 
-# Chaves e segredos: o dist.pem e a chave privada que assina o .crx, perde-la
-# muda o ID da extensao.
+# Keys and secrets: dist.pem is the private key whose public half is the
+# manifest "key"; it only signs a .crx and never leaves this machine.
 *.pem
 *.key
 *.p12

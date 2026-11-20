@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Claude Code for ClickUp - opcoes</title>
+    <title>Task Prompt Launcher for ClickUp: options</title>
     <link rel="stylesheet" href="options.css" />
   </head>
   <body>
     <main>
-      <h1>Claude Code for ClickUp</h1>
+      <h1>Task Prompt Launcher for ClickUp</h1>
       <p class="lead">
-        Templates dos prompts gerados a partir do botao nas tasks do ClickUp.
-        Clica num shortcode para o inserir no template onde tens o cursor.
+        Templates for the prompts built from the button on ClickUp tasks.
+        Click a shortcode to insert it where the cursor is.
       </p>
 
       <div id="shortcodes" class="shortcodes"></div>
@@ -18,31 +18,31 @@
       <section>
         <label for="template">Claude Code</label>
         <p class="hint">
-          O ID chega: o Claude Code vai buscar descricao, subtasks e comentarios
-          pelo MCP do ClickUp.
+          With the ClickUp MCP connected, the ID is enough: Claude Code fetches
+          the description, subtasks and comments itself.
         </p>
         <textarea id="template" rows="6" spellcheck="false"></textarea>
         <pre id="template-preview"></pre>
       </section>
 
       <section>
-        <label for="webTemplate">Claude.ai e ChatGPT</label>
+        <label for="webTemplate">Claude.ai and ChatGPT</label>
         <p class="hint">
-          Sem MCP do lado de la, por isso vale a pena levar o nome e o URL.
+          No ClickUp access on that side, so the prompt carries the name and URL.
         </p>
         <textarea id="webTemplate" rows="6" spellcheck="false"></textarea>
         <pre id="webTemplate-preview"></pre>
       </section>
 
       <div class="actions">
-        <button id="save" type="button" class="primary">Guardar</button>
-        <button id="reset" type="button">Repor defaults</button>
+        <button id="save" type="button" class="primary">Save</button>
+        <button id="reset" type="button">Restore defaults</button>
         <span id="status" role="status"></span>
       </div>
 
       <p class="hint">
-        A pre-visualizacao usa uma task de exemplo. Campos vazios na task saem
-        vazios no prompt.
+        The preview uses a sample task. Fields that are empty on the task come
+        out empty in the prompt.
       </p>
     </main>
     <script src="options.js"></script>

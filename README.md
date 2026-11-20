@@ -1,144 +1,76 @@
-# Claude Code for ClickUp
+# Task Prompt Launcher for ClickUp
 
-Extensão de browser (Chrome/Brave, Manifest V3) que põe um botão do Claude no
-header das tasks do ClickUp. Um clique abre o Claude Desktop na tab Code com o
-prompt inicial já escrito; o caret ao lado abre o menu com as restantes ações.
+A Chrome/Brave extension that adds a button to the ClickUp task view. One click
+opens Claude Code (in the Claude desktop app) with a prompt built from the task;
+the caret next to it opens Claude.ai or ChatGPT, or copies the prompt.
 
-Uso privado. Sem build, sem dependências, sem distribuição na Chrome Web Store.
+Not affiliated with ClickUp, Anthropic or OpenAI.
 
-## Instalar
+## Install
 
-```bash
-node scripts/build.mjs
-```
+1. Download the zip from the [latest release](../../releases/latest) and unzip it.
+2. Open `chrome://extensions` (or `brave://extensions`) and turn on
+   **Developer mode**.
+3. Click **Load unpacked** and pick the unzipped folder.
 
-Produz `dist/` (só os ficheiros da extensão) e o zip da versão.
+Keep the folder where it is: the browser loads the extension from it. To update,
+replace its contents with the new release and click reload on the extension's
+card.
 
-1. `brave://extensions` (ou `chrome://extensions`)
-2. Ligar **Developer mode**
-3. **Load unpacked** e escolher a pasta `dist/`
+The first time, the browser asks before opening the Claude app. Tick "Always
+allow" for `app.clickup.com`.
 
-Depois de mexer no código: correr o build outra vez e clicar no ícone de
-recarregar no cartão da extensão.
+## Use
 
-O `key` do `manifest.json` fixa o ID da extensão
-(`oecclmpimkphgdnfgccbiocciohbndff`), seja qual for a pasta de onde é
-carregada. Sem ele o ID depende do caminho, e mudar o repo de sítio dava uma
-extensão nova, sem as opções guardadas. É a chave pública de `dist.pem`, que
-fica fora do git e só serve para assinar um `.crx`. Fora da Web Store, o
-Chrome e o Brave não instalam `.crx` no macOS, por isso a instalação é sempre
-**Load unpacked**.
+Open a task and click the button next to **Share**. If the header is not
+recognised, the button floats in the bottom-right corner.
 
-Na primeira utilização o Brave pede confirmação para abrir a app externa.
-Marcar "sempre permitir" para `app.clickup.com`.
-
-## Usar
-
-Abrir uma task e clicar no ícone do Claude, à esquerda do **Share**. Quando o
-header não é reconhecido, o botão aparece como pill flutuante no canto inferior
-direito.
-
-Ações no menu:
-
-| Ação | O que faz |
+| Action | What it does |
 | --- | --- |
-| Abrir no Claude Code | `claude://code/new?q=<prompt>` (o mesmo que o clique no ícone) |
-| Abrir no Claude.ai | `https://claude.ai/new?q=<prompt>` em separador novo |
-| Abrir no ChatGPT | `https://chatgpt.com/?q=<prompt>` em separador novo |
-| Copiar prompt | Põe o prompt na clipboard |
-| Copiar ID da task | Só o ID, para colar num prompt já a decorrer |
-| Editar template | Abre a página de opções |
+| Open in Claude Code | `claude://code/new?q=<prompt>`, the same as the main button. Needs the Claude desktop app |
+| Open in Claude.ai | `https://claude.ai/new?q=<prompt>` in a new tab |
+| Open in ChatGPT | `https://chatgpt.com/?q=<prompt>` in a new tab |
+| Copy prompt | Copies the prompt to the clipboard |
+| Copy task ID | Copies only the ID |
+| Edit templates | Opens the options page |
 
-Nenhum dos dois destinos web submete sozinho: ambos só preenchem o composer.
-
-Acrescentar ferramentas é acrescentar uma entrada ao array `ACTIONS` no
-[`content.js`](content.js): cada ação recebe a task e o prompt já montado.
+Nothing is sent on its own: each destination only fills in the prompt.
 
 ## Templates
 
-Dois templates, editáveis na página de opções e guardados em
-`chrome.storage.sync`. A linha vazia no fim deixa o cursor pronto a escrever.
+Two templates, edited on the options page and synced with your browser profile:
+one for Claude Code, one for the web apps. Click a shortcode to insert it.
 
-| Shortcode | Vem de | Exemplo |
-| --- | --- | --- |
-| `{id}` | URL | `123zgec38ut` |
-| `{name}` | Título da task | `Stop And Buy não consegue pagar...` |
-| `{url}` | URL | `https://app.clickup.com/t/2450702/123zgec38ut` |
-| `{date}` | Due date | `Today (2026-09-16)` |
-| `{priority}` | Prioridade | `High` |
-| `{tags}` | Tags, separadas por vírgula | `support` |
-| `{assignees}` | Assignees, separados por vírgula | `Fábio Nunes` |
-| `{list}` | Último breadcrumb | `Moneybox (20min)` |
+| Shortcode | Value |
+| --- | --- |
+| `{id}` | Task ID (custom ID when the workspace uses them) |
+| `{name}` | Task name |
+| `{url}` | Task URL |
+| `{date}` | Due date as ClickUp shows it; `Today`, `Tomorrow` and `Yesterday` get the real date added |
+| `{priority}` | Priority |
+| `{tags}` | Tags, comma-separated |
+| `{assignees}` | Assignees, comma-separated |
+| `{list}` | The list the task is in |
 
-Na página de opções cada shortcode é um chip: clicar insere-o no template onde
-está o cursor. Campos vazios na task saem vazios no prompt.
+The default Claude Code template only sends the ID and name. That is enough
+when Claude Code has the ClickUp MCP server connected; without it, add `{url}` and whatever else you need.
 
-O ClickUp desenha a due date em relativo ("Today", "Mon"), sem data absoluta em
-lado nenhum do DOM. O `{date}` resolve `Today`, `Tomorrow` e `Yesterday` para a
-data real entre parênteses; as outras formas ficam como o ClickUp as mostra.
+The fields are read from the page, so they break if ClickUp changes its markup.
+Open an issue if one comes out empty.
 
-**Claude Code** (default):
-
-```
-Vamos trabalhar na task ClickUp {id} - "{name}".
-
-```
-
-O ID chega para o Claude Code ir buscar descrição, subtasks e comentários pelo
-MCP do ClickUp. O nome serve de contexto rápido e de confirmação visual.
-
-**Claude.ai e ChatGPT** (default):
-
-```
-Vamos trabalhar nesta task do ClickUp:
-
-{name}
-{url}
-
-```
-
-Do outro lado não há MCP do ClickUp, por isso o prompt leva o nome e o URL em
-vez de contar com o ID.
-
-## Deep links
-
-```
-claude://code/new?q=<prompt URL-encoded>
-https://claude.ai/new?q=<prompt URL-encoded>
-https://chatgpt.com/?q=<prompt URL-encoded>
-```
-
-O ChatGPT reescreve o `?q=` para `?prompt=` ao carregar.
-
-Referência: https://support.claude.com/en/articles/14729294-open-claude-desktop-with-a-link
-
-## Notas de implementação
-
-- O ClickUp é uma SPA: o botão é reinjectado por `MutationObserver` e por um
-  patch a `history.pushState` / `replaceState`, com verificação de duplicados.
-- O ID sai do URL. O ClickUp normaliza `/t/{id}` para `/t/{teamId}/{id}`, e com
-  custom IDs o último segmento é o custom ID.
-- O nome sai de `[data-test="task-title__text-area"]`, com fallback para o
-  `document.title` (`Nome da task | #id`). Os restantes campos saem do hero
-  section e dos breadcrumbs, pelo mapa `SHORTCODES` no `content.js`. Todos os
-  selectors foram confirmados numa task real em Setembro de 2026. Se partirem
-  demasiadas vezes, o passo seguinte é ir à API do ClickUp com um token pessoal
-  em `chrome.storage.local`.
-- Os assignees saem da lista `ul` escondida do `cu-assignees` (a versão à vista
-  colapsa em avatares quando são mais do que um).
-- O ClickUp tem tema claro e escuro e não segue o tema do sistema, por isso o
-  menu escolhe as cores pela luminância do fundo por baixo do botão.
-
-## Release
-
-Tag `vX.Y.Z` → o workflow sincroniza a versão do `manifest.json` com a tag,
-valida, empacota e publica o zip na release.
+## Development
 
 ```bash
-git tag v1.4.0 && git push origin v1.4.0
+node scripts/validate.mjs
+node scripts/build.mjs
 ```
 
-## Fora de âmbito (v1)
+`build.mjs` writes `dist/` (load it with **Load unpacked**) and the release zip.
+Pushing a `vX.Y.Z` tag publishes a release with that zip.
 
-Vários templates, mapeamento lista → pasta local (`folder`), atalho de teclado,
-botão nas linhas da lista, abrir no CLI em vez do Desktop.
+The `key` in `manifest.json` pins the extension ID, so it stays the same
+whatever folder it is loaded from and saved templates survive a move.
+
+## License
+
+[MIT](LICENSE)

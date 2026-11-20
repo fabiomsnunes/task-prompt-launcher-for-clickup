@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { cpSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 
-// Os ficheiros que entram na extensao. Tudo o resto (workflows, scripts,
-// README) fica de fora do que e carregado no browser.
+// The files that ship in the extension. Everything else (workflows, scripts,
+// README) stays out of what the browser loads.
 const SHIPPED = [
   "manifest.json",
   "content.js",
@@ -27,4 +27,4 @@ const zip = `clickup-claude-launcher-v${version}.zip`;
 rmSync(zip, { force: true });
 execFileSync("zip", ["-r", "-q", `../${zip}`, "."], { cwd: "dist" });
 
-console.log(`dist/ e ${zip} prontos (v${version})`);
+console.log(`dist/ and ${zip} ready (v${version})`);
