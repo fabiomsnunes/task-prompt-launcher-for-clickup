@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Sincronizar versao do manifest com a tag
+      - name: Sync manifest version with the tag
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           node -e "
@@ -28,10 +28,10 @@ jobs:
 
       - run: node scripts/validate.mjs
 
-      - name: Empacotar
+      - name: Package
         run: node scripts/build.mjs
 
-      - name: Publicar release
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

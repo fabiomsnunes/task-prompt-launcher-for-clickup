@@ -1,25 +1,25 @@
 /**
- * Injeta um botao "Claude Code" na vista de task do ClickUp: clique abre a app
- * com o prompt montado a partir do template; o caret ao lado abre o menu com
- * as restantes accoes.
+ * Adds a launch button to the ClickUp task view: a click opens Claude Code
+ * with a prompt built from the template; the caret next to it opens the menu
+ * with the other actions.
  *
- * O ClickUp e uma SPA: a pagina nunca recarrega, os nos do header sao
- * destruidos e recriados a cada navegacao e os selectors mudam com alguma
- * frequencia. Por isso o botao e reinjectado a partir de um MutationObserver
- * e, quando nenhuma ancora conhecida existe, cai para um botao flutuante.
+ * ClickUp is a SPA: the page never reloads, the header nodes are destroyed and
+ * rebuilt on every navigation and the selectors change now and then. So the
+ * button is re-injected from a MutationObserver and, when no known anchor
+ * exists, falls back to a floating button.
  */
 
 const ROOT_ID = "claude-code-launcher";
 const MENU_ID = "claude-code-launcher-menu";
-// O Claude Code chega ao resto da task pelo MCP do ClickUp a partir do ID; o
-// claude.ai e o ChatGPT nao, por isso o template web leva nome e URL.
+// With the ClickUp MCP connected, Claude Code reaches the rest of the task from
+// its ID; the web apps cannot, so the web template carries the name and URL.
 const DEFAULTS = {
-  template: 'Vamos trabalhar na task ClickUp {id} - "{name}".\n\n',
-  webTemplate: 'Vamos trabalhar nesta task do ClickUp:\n\n{name}\n{url}\n\n',
+  template: 'Let\'s work on ClickUp task {id} - "{name}".\n\n',
+  webTemplate: "Let's work on this ClickUp task:\n\n{name}\n{url}\n\n",
 };
 
-// Verificados na app em Set/2026. O primeiro e o caminho completo; os
-// restantes sao fallbacks para quando a estrutura a volta mudar.
+// Checked against the app in September 2026. The first is the full path; the
+// rest are fallbacks for when the structure around it changes.
 const HEADER_ANCHOR_SELECTORS = [
   '[data-test="task-container__header-wrapper"] .cu-task-view-header__right',
   ".cu-task-view-header__right",
@@ -27,7 +27,7 @@ const HEADER_ANCHOR_SELECTORS = [
   ".task-view-header__right",
 ];
 
-// A ancora interna: o grupo fica imediatamente a esquerda do Share.
+// The inner anchor: the group sits right before the Share button.
 const SHARE_BUTTON_SELECTOR = "cu-share-header-button";
 
 const TASK_NAME_SELECTORS = [
@@ -38,8 +38,8 @@ const TASK_NAME_SELECTORS = [
   ".cu-task-title__overlay",
 ];
 
-// Logomark do Claude Code, inline para nao depender de web_accessible_resources.
-const CLAUDE_ICON = `<svg viewBox="0 5 24 15" width="20" height="12.5" fill-rule="evenodd" clip-rule="evenodd" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949zM6 10.949h1.488V8.102H6v2.847zm10.51 0H18V8.102h-1.49v2.847z"/></svg>`;
+// Inline so it needs no web_accessible_resources.
+const LAUNCH_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5M14 5h5v5M19 5l-8 8"/></svg>`;
 
 const CHECK_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.5l5 5 10-11"/></svg>`;
 
@@ -48,13 +48,13 @@ const CARET_ICON = `<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden=
 let cachedTemplates = { ...DEFAULTS };
 
 /**
- * As accoes do menu. Acrescentar ferramentas e acrescentar entradas aqui:
- * cada uma recebe a task e o prompt ja montado.
+ * The menu actions. Adding a tool means adding an entry here: each one gets
+ * the task and the prompt already built.
  */
 const ACTIONS = [
   {
     id: "open",
-    label: "Abrir no Claude Code",
+    label: "Open in Claude Code",
     primary: true,
     run: (task, prompt) => {
       openExternal(`claude://code/new?q=${encodeURIComponent(prompt)}`);
@@ -62,31 +62,31 @@ const ACTIONS = [
   },
   {
     id: "open-web",
-    label: "Abrir no Claude.ai",
+    label: "Open in Claude.ai",
     template: "webTemplate",
     run: (task, prompt) =>
       openExternal(`https://claude.ai/new?q=${encodeURIComponent(prompt)}`, true),
   },
   {
     id: "open-chatgpt",
-    label: "Abrir no ChatGPT",
+    label: "Open in ChatGPT",
     template: "webTemplate",
     run: (task, prompt) =>
       openExternal(`https://chatgpt.com/?q=${encodeURIComponent(prompt)}`, true),
   },
   {
     id: "copy-prompt",
-    label: "Copiar prompt",
+    label: "Copy prompt",
     run: (task, prompt) => navigator.clipboard.writeText(prompt),
   },
   {
     id: "copy-id",
-    label: "Copiar ID da task",
+    label: "Copy task ID",
     run: (task) => navigator.clipboard.writeText(task.id),
   },
   {
     id: "options",
-    label: "Editar template",
+    label: "Edit templates",
     separated: true,
     run: () => chrome.runtime.sendMessage({ type: "open-options" }),
   },
@@ -104,8 +104,8 @@ function readTemplates() {
 }
 
 /**
- * Aceita /t/{id}, /t/{teamId}/{id} e /t/{teamId}/{CUSTOM-ID}. O ClickUp
- * normaliza o URL para a forma com teamId pouco depois de abrir a task.
+ * Accepts /t/{id}, /t/{teamId}/{id} and /t/{teamId}/{CUSTOM-ID}. ClickUp
+ * rewrites the URL to the teamId form shortly after the task opens.
  */
 function readTaskId() {
   const match = location.pathname.match(/\/t\/(?:(\d+)\/)?([A-Za-z0-9_-]+)/);
@@ -122,7 +122,7 @@ function readTaskNameFromDom() {
   return "";
 }
 
-/** O titulo do separador e `Nome da task | #id`. */
+/** The tab title is `Task name | #id`. */
 function readTaskNameFromTitle() {
   return document.title
     .replace(/^\(\d+\)\s*/, "")
@@ -131,9 +131,9 @@ function readTaskNameFromTitle() {
 }
 
 /**
- * O botao das datas mostra o texto que o ClickUp desenha ("Today", "Mon",
- * "12 Sep"), nao a data absoluta. Os relativos sao resolvidos aqui para o
- * prompt continuar a fazer sentido quando for lido dias depois.
+ * The dates button shows what ClickUp draws ("Today", "Mon", "12 Sep"), not
+ * the absolute date. Relative ones are resolved here so the prompt still makes
+ * sense when it is read days later.
  */
 const RELATIVE_DAYS = { today: 0, tomorrow: 1, yesterday: -1 };
 
@@ -160,7 +160,7 @@ function readAll(selector) {
     .join(", ");
 }
 
-/** Os valores vazios ficam vazios: o que se ve na pre-visualizacao e o que sai. */
+/** Empty values stay empty: what the preview shows is what comes out. */
 const SHORTCODES = {
   id: (id) => id,
   name: () => readTaskNameFromDom() || readTaskNameFromTitle(),
@@ -168,10 +168,10 @@ const SHORTCODES = {
   date: readDueDate,
   priority: () => readText('[data-test="task-hero-section-priority__row-data"]'),
   tags: () => readAll('[data-test="task-hero-section__tags"] .cu-cf-value-tag__text'),
-  // A lista visualmente escondida do cu-assignees tem um nome por assignee; o
-  // que esta a vista colapsa em avatares assim que sao mais do que um.
+  // The visually hidden list in cu-assignees has one name per assignee; the
+  // visible one collapses into avatars as soon as there is more than one.
   assignees: () => readAll('[data-test="task-hero-section__assignees"] ul li'),
-  // O ultimo breadcrumb e a lista; os anteriores sao o space e a folder.
+  // The last breadcrumb is the list; the ones before are the space and folder.
   list: () => {
     const crumbs = document.querySelectorAll(
       '[data-test="task-view-breadcrumbs__timl-list-item"]'
@@ -212,7 +212,7 @@ function flash(button, modifier) {
   button.innerHTML = CHECK_ICON;
   button.classList.add(modifier);
   setTimeout(() => {
-    button.innerHTML = CLAUDE_ICON;
+    button.innerHTML = LAUNCH_ICON;
     button.classList.remove(modifier);
   }, 1500);
 }
@@ -231,8 +231,8 @@ async function runAction(action, { feedback } = {}) {
 }
 
 /**
- * O ClickUp tem tema claro e escuro e o header nao segue o tema do sistema.
- * A cor do menu vem da primeira cor de fundo opaca acima da ancora.
+ * ClickUp has light and dark themes and the header ignores the system theme.
+ * The menu colours follow the first opaque background above the anchor.
  */
 function resolveTheme(node) {
   for (let el = node; el; el = el.parentElement) {
@@ -302,9 +302,9 @@ function createLauncher(floating) {
   const main = document.createElement("button");
   main.type = "button";
   main.className = "claude-code-launcher__button claude-code-launcher__main";
-  main.innerHTML = CLAUDE_ICON;
-  main.title = "Abrir no Claude Code";
-  main.setAttribute("aria-label", "Abrir no Claude Code");
+  main.innerHTML = LAUNCH_ICON;
+  main.title = "Open in Claude Code";
+  main.setAttribute("aria-label", "Open in Claude Code");
   main.addEventListener("click", () => {
     closeMenu();
     runAction(ACTIONS[0], { feedback: main });
@@ -314,8 +314,8 @@ function createLauncher(floating) {
   toggle.type = "button";
   toggle.className = "claude-code-launcher__button claude-code-launcher__toggle";
   toggle.innerHTML = CARET_ICON;
-  toggle.title = "Mais accoes";
-  toggle.setAttribute("aria-label", "Mais accoes");
+  toggle.title = "More actions";
+  toggle.setAttribute("aria-label", "More actions");
   toggle.setAttribute("aria-haspopup", "menu");
   toggle.setAttribute("aria-expanded", "false");
   toggle.addEventListener("click", () => {
@@ -356,7 +356,7 @@ function syncLauncher() {
     const isFloating = existing.classList.contains(
       "claude-code-launcher--floating"
     );
-    // Um botao flutuante da lugar ao header assim que este aparece.
+    // A floating button gives way to the header as soon as it appears.
     if (existing.isConnected && !(anchor && isFloating)) return;
     existing.remove();
     closeMenu();
