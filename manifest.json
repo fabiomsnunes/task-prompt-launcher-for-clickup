@@ -3,6 +3,7 @@
   "name": "Claude Code for ClickUp",
   "version": "1.4.0",
   "description": "Abre a task do ClickUp no Claude Code com o prompt inicial ja escrito.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA03GHLlfF/hwN3UvnP8giEwRmiAJwaQLxSw0NR6hnXp9A07c9gm4AbS8POGWqW51ZrnTSTcwHWAQejr5tdI52/SAuX+0Ew734jgt4bXtxw3XL0RTQfrE1+rWHCqBKSlCKXKFK7CAvzlahIOX4x5C6n/D7ZQN6vKygPuZELA3V/lDdLr9wnla0RIdtowoO8G5L8d0SWRv2URk5RHVmgnuj3xJniceU/p0XNWggu8It5+UbDLAsG5ykJ50YdRXvCO7cAWwrqibuo/Vk90KDy7qxR6FQpX4Ul4NLQY+Eh1Us3sQBxHLEecxf3u6qGKpUujXrTkG4OLGR7LL1RtcCTwLA5wIDAQAB",
   "permissions": [
     "storage"
   ],

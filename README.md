@@ -21,6 +21,14 @@ Produz `dist/` (só os ficheiros da extensão) e o zip da versão.
 Depois de mexer no código: correr o build outra vez e clicar no ícone de
 recarregar no cartão da extensão.
 
+O `key` do `manifest.json` fixa o ID da extensão
+(`oecclmpimkphgdnfgccbiocciohbndff`), seja qual for a pasta de onde é
+carregada. Sem ele o ID depende do caminho, e mudar o repo de sítio dava uma
+extensão nova, sem as opções guardadas. É a chave pública de `dist.pem`, que
+fica fora do git e só serve para assinar um `.crx`. Fora da Web Store, o
+Chrome e o Brave não instalam `.crx` no macOS, por isso a instalação é sempre
+**Load unpacked**.
+
 Na primeira utilização o Brave pede confirmação para abrir a app externa.
 Marcar "sempre permitir" para `app.clickup.com`.
 
