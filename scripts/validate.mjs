@@ -13,6 +13,12 @@ if (!/^\d+\.\d+\.\d+$/.test(manifest.version)) {
   errors.push(`version invalida: ${manifest.version}`);
 }
 
+// Without the key the extension ID follows the folder it is loaded from, and a
+// move silently becomes a new extension that has lost its saved options.
+if (!manifest.key) {
+  errors.push("key em falta: o ID da extensao passa a depender do caminho");
+}
+
 const referenced = [
   manifest.options_ui?.page,
   manifest.background?.service_worker,
