@@ -1,8 +1,8 @@
 # Task Prompt Launcher for ClickUp
 
 A Chrome/Brave extension that adds a button to the ClickUp task view. One click
-opens Claude Code (in the Claude desktop app) with a prompt built from the task;
-the caret next to it opens Claude.ai or ChatGPT, or copies the prompt.
+opens your coding agent (Claude Code or Codex) with a prompt built from the
+task; the caret next to it opens the other tools, or copies the prompt.
 
 Not affiliated with ClickUp, Anthropic or OpenAI.
 
@@ -22,12 +22,14 @@ allow" for `app.clickup.com`.
 
 ## Use
 
-Open a task and click the button next to **Share**. If the header is not
-recognised, the button floats in the bottom-right corner.
+Open a task and click the button next to **Share**. It shows the icon of the
+tool it opens, which you pick under **Main button** on the options page. If the
+header is not recognised, the button floats in the bottom-right corner.
 
 | Action | What it does |
 | --- | --- |
-| Open in Claude Code | `claude://code/new?q=<prompt>`, the same as the main button. Needs the Claude desktop app |
+| Open in Claude Code | `claude://code/new?q=<prompt>`. Needs the Claude desktop app |
+| Open in Codex | `codex://threads/new?prompt=<prompt>`. Needs the Codex app |
 | Open in Claude.ai | `https://claude.ai/new?q=<prompt>` in a new tab |
 | Open in ChatGPT | `https://chatgpt.com/?q=<prompt>` in a new tab |
 | Copy prompt | Copies the prompt to the clipboard |
@@ -39,7 +41,7 @@ Nothing is sent on its own: each destination only fills in the prompt.
 ## Templates
 
 Two templates, edited on the options page and synced with your browser profile:
-one for Claude Code, one for the web apps. Click a shortcode to insert it.
+one for Claude Code and Codex, one for the web apps. Click a shortcode to insert it.
 
 | Shortcode | Value |
 | --- | --- |
@@ -53,7 +55,7 @@ one for Claude Code, one for the web apps. Click a shortcode to insert it.
 | `{list}` | The list the task is in |
 
 The default Claude Code template only sends the ID and name. That is enough
-when Claude Code has the ClickUp MCP server connected; without it, add `{url}` and whatever else you need.
+when the agent has the ClickUp MCP server connected; without it, add `{url}` and whatever else you need.
 
 The fields are read from the page, so they break if ClickUp changes its markup.
 Open an issue if one comes out empty.

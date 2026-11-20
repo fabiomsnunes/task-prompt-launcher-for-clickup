@@ -1,6 +1,7 @@
 const DEFAULTS = {
   template: 'Let\'s work on ClickUp task {id} - "{name}".\n\n',
   webTemplate: "Let's work on this ClickUp task:\n\n{name}\n{url}\n\n",
+  defaultAction: "open",
 };
 
 const SHORTCODES = [
@@ -16,6 +17,7 @@ const SHORTCODES = [
 
 const FIELDS = Object.keys(DEFAULTS);
 const status = document.getElementById("status");
+const TEMPLATE_FIELDS = ["template", "webTemplate"];
 let lastFocused = document.getElementById("template");
 
 function render(field) {
@@ -56,11 +58,11 @@ for (const { key, hint } of SHORTCODES) {
 chrome.storage.sync.get(DEFAULTS, (items) => {
   for (const field of FIELDS) {
     document.getElementById(field).value = items[field] || DEFAULTS[field];
-    render(field);
   }
+  TEMPLATE_FIELDS.forEach(render);
 });
 
-for (const field of FIELDS) {
+for (const field of TEMPLATE_FIELDS) {
   const node = document.getElementById(field);
   node.addEventListener("input", () => render(field));
   node.addEventListener("focus", () => {
@@ -78,7 +80,7 @@ document.getElementById("save").addEventListener("click", () => {
 document.getElementById("reset").addEventListener("click", () => {
   for (const field of FIELDS) {
     document.getElementById(field).value = DEFAULTS[field];
-    render(field);
   }
+  TEMPLATE_FIELDS.forEach(render);
   chrome.storage.sync.set(DEFAULTS, () => announce("Defaults restored"));
 });
