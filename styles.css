@@ -131,7 +131,7 @@
   flex: none;
 }
 
-.claude-code-launcher--floating .claude-code-launcher__main svg path {
+.claude-code-launcher--floating .claude-code-launcher__mark {
   fill: #fff;
 }
 

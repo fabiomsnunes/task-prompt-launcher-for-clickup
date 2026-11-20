@@ -42,7 +42,7 @@ const TASK_NAME_SELECTORS = [
 // Each tool's own mark, inline so they need no web_accessible_resources. The
 // button shows the mark of the default action, so it is clear where it opens.
 const svg = (viewBox, d, color) =>
-  `<svg viewBox="${viewBox}" width="16" height="16" fill-rule="evenodd" aria-hidden="true" focusable="false"><path fill="${color}" d="${d}"/></svg>`;
+  `<svg viewBox="${viewBox}" width="16" height="16" fill-rule="evenodd" aria-hidden="true" focusable="false"><path class="claude-code-launcher__mark" fill="${color}" d="${d}"/></svg>`;
 
 const ICONS = {
   claudeCode: svg("0 0 24 24", "M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949zM6 10.949h1.488V8.102H6v2.847zm10.51 0H18V8.102h-1.49v2.847z", "#d97757"),
