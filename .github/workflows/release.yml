@@ -36,6 +36,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            "clickup-claude-launcher-$GITHUB_REF_NAME.zip" \
+            "task-prompt-launcher-for-clickup-$GITHUB_REF_NAME.zip" \
             --title "$GITHUB_REF_NAME" \
             --generate-notes

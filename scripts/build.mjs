@@ -23,7 +23,7 @@ for (const entry of SHIPPED) {
   cpSync(entry, `dist/${entry}`, { recursive: true });
 }
 
-const zip = `clickup-claude-launcher-v${version}.zip`;
+const zip = `task-prompt-launcher-for-clickup-v${version}.zip`;
 rmSync(zip, { force: true });
 execFileSync("zip", ["-r", "-q", `../${zip}`, "."], { cwd: "dist" });
 
