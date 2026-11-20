@@ -13,12 +13,23 @@
         Click a shortcode to insert it where the cursor is.
       </p>
 
+      <section>
+        <label for="defaultAction">Main button</label>
+        <p class="hint">What a click on the button opens, and the icon it shows.</p>
+        <select id="defaultAction">
+          <option value="open">Claude Code</option>
+          <option value="open-codex">Codex</option>
+          <option value="open-web">Claude.ai</option>
+          <option value="open-chatgpt">ChatGPT</option>
+        </select>
+      </section>
+
       <div id="shortcodes" class="shortcodes"></div>
 
       <section>
-        <label for="template">Claude Code</label>
+        <label for="template">Claude Code and Codex</label>
         <p class="hint">
-          With the ClickUp MCP connected, the ID is enough: Claude Code fetches
+          With the ClickUp MCP connected, the ID is enough: the agent fetches
           the description, subtasks and comments itself.
         </p>
         <textarea id="template" rows="6" spellcheck="false"></textarea>

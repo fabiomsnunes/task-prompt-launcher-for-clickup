@@ -101,7 +101,9 @@
 }
 
 .claude-code-launcher-menu__item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
   padding: 7px 10px;
   border: 0;
@@ -120,6 +122,17 @@
 
 .claude-code-launcher-menu--light .claude-code-launcher-menu__item:hover {
   background: rgba(0, 0, 0, 0.06);
+}
+
+.claude-code-launcher-menu__icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.claude-code-launcher--floating .claude-code-launcher__mark {
+  fill: #fff;
 }
 
 .claude-code-launcher-menu__separator {
